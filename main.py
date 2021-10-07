@@ -1,6 +1,4 @@
 import pygame as pg
-from enum import Enum, unique
-
 
 UP = -1
 NONE = 0
@@ -21,8 +19,26 @@ class Pallet:
         self.hitbox.move_ip((0, self.SPEED/60 * direction))
         self.hitbox.clamp_ip(self.game.screen_rect)
 
-    def draw(self, surface):
-        pg.draw.rect(surface, self.COLOR, self.hitbox)
+    def draw(self):
+        pg.draw.rect(self.game.screen, self.COLOR, self.hitbox)
+
+
+class Ball:
+    WIDTH = 20
+    HEIGHT = 20
+    COLOR = pg.Color('white')
+
+    def __init__(self, game):
+        self.game = game
+        self.hitbox = pg.Rect(
+            game.width//2 - self.WIDTH//2,
+            game.height//2 - self.HEIGHT//2,
+            self.WIDTH,
+            self.HEIGHT
+        )
+
+    def draw(self):
+        pg.draw.rect(self.game.screen, self.COLOR, self.hitbox)
 
 
 class NotPong:
@@ -39,6 +55,7 @@ class NotPong:
         y = self.height//2 - Pallet.HEIGHT//2
         self.left_plt = Pallet(self, gap, y)
         self.right_plt = Pallet(self, self.width - gap - Pallet.WIDTH, y)
+        self.ball = Ball(self)
 
     def mainloop(self):
         clock = pg.time.Clock()
@@ -65,8 +82,9 @@ class NotPong:
                 self.left_plt.move(DOWN)
 
             self.screen.fill(pg.Color('black'))
-            self.left_plt.draw(self.screen)
-            self.right_plt.draw(self.screen)
+            self.left_plt.draw()
+            self.right_plt.draw()
+            self.ball.draw()
             pg.display.flip()
             clock.tick(60)
 
